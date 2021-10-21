@@ -1,0 +1,52 @@
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq frame-title-format "emacs")
+(setq inhibit-startup-message t)
+
+(ido-mode 1)
+
+;; Custom file
+(defvar alpha2phi/custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+;; Package repositories
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+(package-initialize)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+;; Install use-package
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(require 'use-package)
+
+; (defconst private-dir  (expand-file-name "private" user-emacs-directory))
+; (defconst temp-dir (format "%s/cache" private-dir) "elisp temp directories")
+
+;; Emacs customizations
+(setq custom-file                        alpha2phi/custom-file
+      make-backup-files                  nil
+      ; inhibit-startup-message            t
+      use-package-always-ensure          t)
+
+;; Keep buffers automatically up to date
+(global-auto-revert-mode t)
+
+;; Display line number
+(global-display-line-numbers-mode)
+
+;; Show matching parentheses
+(show-paren-mode 1)
+
+;; Need to load custom file to avoid being overwritten
+;; more at https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Customizations.html
+(if (file-exists-p alpha2phi/custom-file)
+  (load custom-file))
+
+;; Delete trailing whitespace before save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(provide 'base)
